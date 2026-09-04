@@ -1,0 +1,18 @@
+# Xcode
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Secrets and signing material
+*.p12
+*.mobileprovision
+*.cer
+*.key
+secrets/
+
+# Generated artifacts
+*.ipa
+*.xcarchive
+*.dSYM.zip
