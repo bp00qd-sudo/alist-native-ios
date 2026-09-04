@@ -15,6 +15,9 @@ targets:
     platform: iOS
     sources:
       - path: AListNativeUI
+    frameworks:
+      - path: build/AListCore.xcframework
+        embed: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bp00qd.alist-native-ios
@@ -25,6 +28,7 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         CODE_SIGN_STYLE: Manual
         CODE_SIGN_IDENTITY: ""
+        OTHER_LDFLAGS: "$(inherited) -lc++"
     scheme:
       gatherCoverageData: false
       testTargets: []
@@ -32,16 +36,3 @@ targets:
         config: Debug
       archive:
         config: Release
-  AListCore:
-    type: framework
-    platform: iOS
-    sources:
-      - path: AListCore
-        excludes:
-          - "cmd/**"
-          - "main.go"
-          - "iosbridge/**"
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.bp00qd.alist-core
-        PRODUCT_NAME: AListCore
