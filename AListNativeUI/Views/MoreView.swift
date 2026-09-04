@@ -82,13 +82,13 @@ struct PasswordEditorView: View {
             Form {
                 Section("账号") { LabeledContent("用户名", value: "admin") }
                 Section("新密码") {
-                    SecureField("至少 6 位", text: $password)
+                    SecureField("请输入新密码（不限长度）", text: $password)
                     SecureField("确认新密码", text: $confirmation)
                 }
                 if !error.isEmpty { Text(error).foregroundStyle(AppTheme.danger) }
                 Button("保存密码") {
-                    guard password.count >= 6, password == confirmation else {
-                        error = "密码不一致或少于 6 位"
+                    guard !password.isEmpty, password == confirmation else {
+                        error = "密码不一致或密码为空"
                         return
                     }
                     model.changePassword(password)

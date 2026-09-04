@@ -11,7 +11,6 @@ struct RootView: View {
                 TabView(selection: $model.selectedTab) {
                     HomeView().tabItem { Label("首页", systemImage: "house.fill") }.tag(AppTab.home)
                     FilesView().tabItem { Label("文件", systemImage: "folder.fill") }.tag(AppTab.files)
-                    TasksView().tabItem { Label("任务", systemImage: "arrow.down.circle.fill") }.tag(AppTab.tasks)
                     StoragesView().tabItem { Label("存储", systemImage: "externaldrive.fill") }.tag(AppTab.storages)
                     MoreView().tabItem { Label("更多", systemImage: "ellipsis.circle.fill") }.tag(AppTab.more)
                 }
@@ -46,16 +45,16 @@ struct PasswordSetupView: View {
                     LabeledContent("用户名", value: "admin")
                 }
                 Section("访问密码") {
-                    SecureField("至少 6 位", text: $password)
+                    SecureField("请输入访问密码（不限长度）", text: $password)
                     SecureField("再次输入密码", text: $confirmation)
                 }
                 if showError {
-                    Text("两次密码不一致，且密码至少需要 6 位。")
+                    Text("两次密码不一致，密码不能为空。")
                         .foregroundStyle(AppTheme.danger)
                 }
                 Section {
                     Button("设置密码并启动服务") {
-                        guard password.count >= 6, password == confirmation else {
+                        guard !password.isEmpty, password == confirmation else {
                             showError = true
                             return
                         }

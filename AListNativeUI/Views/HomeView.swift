@@ -13,7 +13,6 @@ struct HomeView: View {
                 LazyVStack(alignment: .leading, spacing: 18) {
                     serviceCard
                     quickActions
-                    taskSummary
                     storageSummary
                     memorySummary
                     keepAliveCard
@@ -86,19 +85,6 @@ struct HomeView: View {
                 ActionTile(title: "Safari 管理", icon: "safari.fill") { openSafari() }
                 ActionTile(title: "WebDAV", icon: "server.rack") { showWebDAVHelp = true }
             }
-        }
-    }
-
-    private var taskSummary: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            SectionHeader(title: "活动任务", action: "查看全部") { model.selectedTab = .tasks }
-            VStack(spacing: 0) {
-                ForEach(model.tasks.prefix(3)) { task in
-                    TaskRow(task: task)
-                    if task.id != model.tasks.prefix(3).last?.id { Divider() }
-                }
-            }
-            .appCard()
         }
     }
 
@@ -182,25 +168,6 @@ struct ActionTile: View {
                 .frame(maxWidth: .infinity, minHeight: 46)
         }
         .buttonStyle(.bordered)
-    }
-}
-
-struct TaskRow: View {
-    let task: TaskSummary
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: task.icon).foregroundStyle(AppTheme.accent)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(task.title).lineLimit(1)
-                Text(task.detail).font(.caption).foregroundStyle(.secondary)
-            }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 3) {
-                Text(task.state).font(.caption).foregroundStyle(.secondary)
-                if task.progress > 0 { Text("\(Int(task.progress * 100))%").font(.caption.bold()) }
-            }
-        }
-        .padding(.vertical, 10)
     }
 }
 

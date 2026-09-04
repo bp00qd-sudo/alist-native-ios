@@ -1,52 +1,5 @@
 import SwiftUI
 
-struct TasksView: View {
-    @EnvironmentObject private var model: AppModel
-    @State private var filter = "进行中"
-    private let filters = ["进行中", "等待中", "已完成", "失败"]
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Picker("状态", selection: $filter) {
-                    ForEach(filters, id: \.self) { Text($0) }
-                }
-                .pickerStyle(.segmented)
-                .listRowBackground(Color.clear)
-                ForEach(model.tasks) { task in
-                    TaskDetailRow(task: task)
-                }
-                Section("资源策略") {
-                    LabeledContent("活动 worker", value: "3")
-                    LabeledContent("排队上限", value: "16")
-                    Text("内存紧张时新任务排队，传输使用流式缓冲。")
-                        .font(.footnote).foregroundStyle(.secondary)
-                }
-            }
-            .navigationTitle("任务")
-        }
-    }
-}
-
-private struct TaskDetailRow: View {
-    let task: TaskSummary
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: task.icon).foregroundStyle(AppTheme.accent)
-            VStack(alignment: .leading, spacing: 5) {
-                Text(task.title).lineLimit(1)
-                Text(task.detail).font(.caption).foregroundStyle(.secondary)
-                if task.progress > 0 {
-                    ProgressView(value: task.progress)
-                }
-            }
-            Spacer()
-            Text(task.state).font(.caption).foregroundStyle(.secondary)
-        }
-        .padding(.vertical, 5)
-    }
-}
-
 struct StoragesView: View {
     @EnvironmentObject private var model: AppModel
     @State private var showAdd = false
@@ -113,9 +66,7 @@ private struct AddStorageView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    TextField("搜索全部驱动", text: $search)
-                }
+                Section { TextField("搜索全部驱动", text: $search) }
                 Section("全部驱动") {
                     ForEach(drivers.filter { search.isEmpty || $0.localizedCaseInsensitiveContains(search) }, id: \.self) { driver in
                         HStack {

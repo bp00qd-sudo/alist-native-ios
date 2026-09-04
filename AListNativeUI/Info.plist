@@ -4,6 +4,8 @@
 <dict>
     <key>CFBundleDisplayName</key>
     <string>AList Native</string>
+    <key>CFBundleExecutable</key>
+    <string>AListNative</string>
     <key>CFBundleIdentifier</key>
     <string>com.bp00qd.alist-native-ios</string>
     <key>CFBundleName</key>

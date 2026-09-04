@@ -9,12 +9,11 @@ SwiftUI 主界面原型与 iOS 全功能移植工程骨架。
 - admin 账号与访问密码显示/复制/隐藏
 - WebDAV 挂载卡片
 - 快捷操作
-- 活动任务摘要
 - 存储统计摘要
 - 实时内存摘要
 - 后台位置包活开关
 - 静音音频包活开关
-- 文件、任务、存储、更多页面
+- 文件、存储、更多页面
 - 首次启动 admin 密码设置
 
 ## 构建
@@ -28,7 +27,7 @@ xcodebuild -project AListNativeUI.xcodeproj \
   -archivePath build/AListNativeUI.xcarchive archive
 ```
 
-当前 `AppModel` 中的 AList、内存和任务数据是 UI 原型数据。后续将通过 Go bridge 替换为真实服务状态；不会把密码硬编码到仓库。
+当前 `AppModel` 中的 AList、内存和存储数据是 UI 原型数据。后续将通过 Go bridge 替换为真实服务状态；不会把密码硬编码到仓库。任务模块已按要求移除，密码不设最小长度限制但不能为空。
 
 ## 说明
 
