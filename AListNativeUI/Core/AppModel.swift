@@ -6,6 +6,7 @@ final class AppModel: ObservableObject {
     @Published var selectedTab: AppTab = .home
     @Published var serviceState: ServiceState
     @Published var serviceMessage = ""
+    @Published var coreState = "未接入"
     @Published var accessPassword: String
     @Published var passwordVisible = true
     @Published var needsInitialPassword: Bool
@@ -16,6 +17,7 @@ final class AppModel: ObservableObject {
     @Published var lastRefresh = Date()
 
     let keepAlive = BackgroundKeepAliveCoordinator()
+    private let alistBridge = AListBridge()
     private var startTask: Task<Void, Never>?
 
     init() {
@@ -24,6 +26,7 @@ final class AppModel: ObservableObject {
         needsInitialPassword = password.isEmpty
         serviceState = password.isEmpty ? .setup : .stopped
         if password.isEmpty { serviceMessage = "请先设置 admin 访问密码" }
+        else { coreState = "待启动 AList Go 核心" }
     }
 
     func configureInitialPassword(_ password: String) {
@@ -46,17 +49,36 @@ final class AppModel: ObservableObject {
         serviceMessage = "正在启动 HTTP 与 WebDAV 服务"
         startTask?.cancel()
         startTask = Task { [weak self] in
-            try? await Task.sleep(for: .milliseconds(450))
-            guard !Task.isCancelled, let self else { return }
-            self.serviceState = .running
-            self.serviceMessage = "服务已启动，局域网访问已开启"
-            self.lastRefresh = Date()
+            guard let self else { return }
+            let dataDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("AList", isDirectory: true).path
+            do {
+                try FileManager.default.createDirectory(atPath: dataDirectory, withIntermediateDirectories: true)
+                switch self.alistBridge.start(dataDirectory: dataDirectory, password: self.accessPassword) {
+                case .success(let url):
+                    self.localURL = url
+                    self.webDAVURL = url + "/dav"
+                    self.coreState = "AList Go 核心运行中"
+                    self.serviceState = .running
+                    self.serviceMessage = "服务已启动，局域网访问已开启"
+                case .failure(let error):
+                    self.coreState = "桥接待接入"
+                    self.serviceState = .error
+                    self.serviceMessage = error.localizedDescription
+                }
+                self.lastRefresh = Date()
+            } catch {
+                self.serviceState = .error
+                self.serviceMessage = error.localizedDescription
+            }
         }
     }
 
     func stopService() {
         startTask?.cancel()
+        alistBridge.stop()
         serviceState = .stopped
+        coreState = "AList Go 核心已停止"
         serviceMessage = "服务已停止"
     }
 

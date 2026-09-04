@@ -32,3 +32,16 @@ targets:
         config: Debug
       archive:
         config: Release
+  AListCore:
+    type: framework
+    platform: iOS
+    sources:
+      - path: AListCore
+        excludes:
+          - "cmd/**"
+          - "main.go"
+          - "iosbridge/**"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bp00qd.alist-core
+        PRODUCT_NAME: AListCore

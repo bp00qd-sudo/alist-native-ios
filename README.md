@@ -1,6 +1,6 @@
 # AList Native iOS
 
-SwiftUI 主界面原型与 iOS 全功能移植工程骨架。
+SwiftUI 主界面与 AList Go 原生 iOS 移植工程。当前正在把上游 AList 核心接入 iOS Framework。
 
 ## 当前界面
 
