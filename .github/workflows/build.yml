@@ -31,6 +31,8 @@ jobs:
 
       - name: Build AList Go iOS framework
         run: bash ./scripts/build-alist-framework.sh
+        env:
+          GOFLAGS: -mod=mod
 
       - name: Regenerate project with framework
         run: xcodegen generate
