@@ -23,6 +23,7 @@ import (
     "github.com/alist-org/alist/v3/internal/db"
     "github.com/alist-org/alist/v3/internal/frp"
     "github.com/alist-org/alist/v3/internal/fs"
+    "github.com/alist-org/alist/v3/internal/op"
     _ "github.com/alist-org/alist/v3/internal/offline_download"
     "github.com/alist-org/alist/v3/server"
     "github.com/gin-gonic/gin"
@@ -44,6 +45,24 @@ type Engine struct {
 
 func NewEngine(dataDir, adminPassword string) *Engine {
     return &Engine{dataDir: filepath.Clean(dataDir), password: adminPassword, address: "0.0.0.0", port: 5244, status: "stopped"}
+}
+
+func (e *Engine) SetAdminPassword(password string) error {
+    e.mu.Lock()
+    defer e.mu.Unlock()
+    if e.status == "running" || e.status == "starting" { return errors.New("cannot change password while service is running") }
+    if password == "" { return errors.New("admin password cannot be empty") }
+    e.password = password
+    return nil
+}
+
+// UpdateAdminPassword updates the persisted AList admin user after bootstrap.
+func (e *Engine) UpdateAdminPassword(password string) error {
+    if password == "" { return errors.New("admin password cannot be empty") }
+    admin, err := op.GetAdmin()
+    if err != nil { return err }
+    admin.SetPassword(password)
+    return op.UpdateUser(admin)
 }
 
 func (e *Engine) SetListenPort(port int) {

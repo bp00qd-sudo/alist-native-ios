@@ -39,8 +39,13 @@ final class AppModel: ObservableObject {
 
     func changePassword(_ password: String) {
         guard !password.isEmpty else { return }
-        KeychainStore.write(password, service: "AListNative", account: "admin")
-        accessPassword = password
+        if alistBridge.setAdminPassword(password) {
+            KeychainStore.write(password, service: "AListNative", account: "admin")
+            accessPassword = password
+        } else {
+            KeychainStore.write(password, service: "AListNative", account: "admin")
+            accessPassword = password
+        }
     }
 
     func startService() {
