@@ -4,6 +4,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CORE="$ROOT/AListCore"
 OUT="$ROOT/build"
 GO_VERSION="1.25.0"
+export GOFLAGS="${GOFLAGS:--mod=mod}"
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
   echo "This build must run on macOS with Xcode and iOS SDK." >&2

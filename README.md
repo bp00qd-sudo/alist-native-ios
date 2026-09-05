@@ -20,8 +20,8 @@ SwiftUI 主界面与 AList Go 原生 iOS 移植工程。
 ## 当前移植结构
 
 - `AListCore/`：固定上游 AList Go 源码快照，保留全部驱动、WebDAV、归档、搜索和服务代码
-- `Porting/iosbridge/bridge.go`：iOS 服务生命周期桥接
-- `Porting/iosbridge/export.go`：面向 Swift 的 C 导出接口
+- `AListCore/iosbridge/bridge.go`：AList 服务生命周期桥接
+- `AListCore/iosbridge_export/main.go`：面向 Swift 的 C 导出接口
 - `AListNativeUI/Core/AListBridge.swift`：Swift 调用桥接层
 - `scripts/build-alist-framework.sh`：macOS + Xcode + iOS SDK Framework 构建脚本
 
