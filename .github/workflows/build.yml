@@ -21,11 +21,16 @@ jobs:
       - name: Generate project
         run: xcodegen generate
 
-      - name: Check AList port tree
+      - name: Prepare AList frontend
         run: |
-          test -f Porting/iosbridge/bridge.go
-          test -d AListCore
-          test -f AListCore/go.mod
+          test -f AListCore/public/public.go
+          test -f AListCore/public/dist/index.html
+
+      - name: Build AList Go iOS framework
+        run: ./scripts/build-alist-framework.sh
+
+      - name: Regenerate project with framework
+        run: xcodegen generate
 
       - name: Build unsigned archive
         run: |

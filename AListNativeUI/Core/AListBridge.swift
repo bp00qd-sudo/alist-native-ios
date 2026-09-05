@@ -3,6 +3,7 @@ import Foundation
 @_silgen_name("AListEngineNew") private func AListEngineNew(_ dataDir: UnsafePointer<CChar>, _ password: UnsafePointer<CChar>) -> UInt
 @_silgen_name("AListEngineStart") private func AListEngineStart(_ handle: UInt) -> Int32
 @_silgen_name("AListEngineStop") private func AListEngineStop(_ handle: UInt) -> Int32
+@_silgen_name("AListEngineSetAdminPassword") private func AListEngineSetAdminPassword(_ handle: UInt, _ password: UnsafePointer<CChar>) -> Int32
 @_silgen_name("AListEngineURL") private func AListEngineURL(_ handle: UInt) -> UnsafeMutablePointer<CChar>
 @_silgen_name("AListEngineStatusJSON") private func AListEngineStatusJSON(_ handle: UInt) -> UnsafeMutablePointer<CChar>
 @_silgen_name("AListEngineFree") private func AListEngineFree(_ handle: UInt)
@@ -25,6 +26,11 @@ final class AListBridge {
         let pointer = AListEngineURL(handle)
         defer { AListFreeString(pointer) }
         return .success(String(cString: pointer))
+    }
+
+    func setAdminPassword(_ password: String) -> Bool {
+        guard handle != 0 else { return false }
+        return password.withCString { AListEngineSetAdminPassword(handle, $0) == 0 }
     }
 
     func stop() {

@@ -15,9 +15,10 @@ command -v xcrun >/dev/null || { echo "Xcode is required" >&2; exit 2; }
 mkdir -p "$OUT"
 cd "$CORE"
 
-gofmt -w iosbridge/bridge.go
+gofmt -w iosbridge/bridge.go iosbridge_export/main.go
 # Build a c-archive with every iOS-compatible AList driver. Platform-specific
 # packages must provide ios_unsupported/ios_remote adapters before this step.
+# The export wrapper is a main package and owns the C ABI entry points.
 export GOOS=ios
 export GOARCH=arm64
 export CGO_ENABLED=1
@@ -29,7 +30,7 @@ rm -rf "$OUT/AListCore-device" "$OUT/AListCore.xcframework"
 mkdir -p "$OUT/AListCore-device"
 go build -trimpath -buildmode=c-archive -tags=jsoniter \
   -ldflags='-s -w' \
-  -o "$OUT/AListCore-device/AListCore.a" ./iosbridge
+  -o "$OUT/AListCore-device/AListCore.a" ./iosbridge_export
 
 xcrun xcodebuild -create-xcframework \
   -library "$OUT/AListCore-device/AListCore.a" \
