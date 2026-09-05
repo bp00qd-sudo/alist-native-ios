@@ -1,5 +1,7 @@
 module github.com/alist-org/alist/v3
 
+replace github.com/shirou/gopsutil/v3 => ./third_party/gopsutil
+
 go 1.25.0
 
 require (
