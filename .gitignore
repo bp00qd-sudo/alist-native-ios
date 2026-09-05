@@ -16,3 +16,6 @@ secrets/
 *.ipa
 *.xcarchive
 *.dSYM.zip
+
+# Porting source archive generated for transfer only
+Porting/alist-core-source.tar.gz
