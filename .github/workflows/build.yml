@@ -27,7 +27,7 @@ jobs:
           test -f AListCore/public/dist/index.html
 
       - name: Build AList Go iOS framework
-        run: ./scripts/build-alist-framework.sh
+        run: bash ./scripts/build-alist-framework.sh
 
       - name: Regenerate project with framework
         run: xcodegen generate
