@@ -15,13 +15,16 @@ targets:
     platform: iOS
     sources:
       - path: AListNativeUI
-    frameworks:
-      - path: build/AListCore.xcframework
+    dependencies:
+      - framework: build/AListCore.xcframework
         embed: false
+        link: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bp00qd.alist-native-ios
         PRODUCT_NAME: AListNative
+        MARKETING_VERSION: "2.0.3"
+        CURRENT_PROJECT_VERSION: "808"
         INFOPLIST_FILE: AListNativeUI/Info.plist
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_EMIT_LOC_STRINGS: YES
