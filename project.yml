@@ -23,15 +23,15 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bp00qd.alist-native-ios
         PRODUCT_NAME: AListNative
-        MARKETING_VERSION: "2.0.3"
-        CURRENT_PROJECT_VERSION: "808"
+        MARKETING_VERSION: "2.0.4"
+        CURRENT_PROJECT_VERSION: "809"
         INFOPLIST_FILE: AListNativeUI/Info.plist
         TARGETED_DEVICE_FAMILY: "1,2"
         SWIFT_EMIT_LOC_STRINGS: YES
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         CODE_SIGN_STYLE: Manual
         CODE_SIGN_IDENTITY: ""
-        OTHER_LDFLAGS: "$(inherited) -lc++"
+        OTHER_LDFLAGS: "$(inherited) -lc++ -lresolv"
     scheme:
       gatherCoverageData: false
       testTargets: []
