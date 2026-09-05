@@ -15,8 +15,11 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer || true
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install Go and XcodeGen
+        run: |
+          brew install go@1.25 xcodegen
+          echo "$(brew --prefix go@1.25)/bin" >> "$GITHUB_PATH"
+          go version
 
       - name: Generate project
         run: xcodegen generate
