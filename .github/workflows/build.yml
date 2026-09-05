@@ -34,12 +34,40 @@ jobs:
         env:
           GOFLAGS: -mod=mod
 
+      - name: Verify AList framework and exported symbols
+        run: |
+          set -euo pipefail
+          find build -maxdepth 4 -print
+          test -f build/AListCore-device/AListCore.a
+          test -f build/AListCore-device/AListCore.h
+          test -d build/AListCore.xcframework
+          file build/AListCore-device/AListCore.a
+          lipo -info build/AListCore-device/AListCore.a | tee "$RUNNER_TEMP/alistcore-arch.txt"
+          grep -q 'arm64' "$RUNNER_TEMP/alistcore-arch.txt"
+          nm -gU build/AListCore-device/AListCore.a | tee "$RUNNER_TEMP/alistcore-symbols.txt"
+          grep -E '_AListEngine(New|SetAdminPassword|SetListenPort|Start|Stop|URL|StatusJSON|LogsJSON|Free)$' "$RUNNER_TEMP/alistcore-symbols.txt"
+          grep -E '_AListFreeString$' "$RUNNER_TEMP/alistcore-symbols.txt"
+
       - name: Regenerate project with framework
         run: xcodegen generate
 
+      - name: Verify generated AList framework link settings
+        run: |
+          set -euo pipefail
+          test -f AListNativeUI.xcodeproj/project.pbxproj
+          grep -n 'AListCore.xcframework' AListNativeUI.xcodeproj/project.pbxproj
+          grep -q 'AListCore.xcframework in Frameworks' AListNativeUI.xcodeproj/project.pbxproj
+          xcodebuild -showBuildSettings \
+            -project AListNativeUI.xcodeproj \
+            -scheme AListNativeUI \
+            -configuration Release \
+            | tee "$RUNNER_TEMP/xcodebuild-settings.txt"
+
       - name: Build unsigned archive
         run: |
+          set -o pipefail
           xcodebuild archive \
+            -verbose \
             -project AListNativeUI.xcodeproj \
             -scheme AListNativeUI \
             -sdk iphoneos \
@@ -47,7 +75,33 @@ jobs:
             -archivePath "$RUNNER_TEMP/AListNativeUI.xcarchive" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY=""
+            CODE_SIGN_IDENTITY="" \
+            | tee "$RUNNER_TEMP/xcodebuild-archive.log"
+
+      - name: Collect archive link diagnostics
+        if: always()
+        run: |
+          set +e
+          echo '--- archive link-related output ---'
+          if [ -f "$RUNNER_TEMP/xcodebuild-archive.log" ]; then
+            grep -E 'AListCore|Undefined symbols|Ld |clang|framework|library' "$RUNNER_TEMP/xcodebuild-archive.log" || true
+          fi
+          echo '--- generated project references ---'
+          if [ -f AListNativeUI.xcodeproj/project.pbxproj ]; then
+            grep -n 'AListCore.xcframework' AListNativeUI.xcodeproj/project.pbxproj || true
+          fi
+
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alist-native-ios-build-diagnostics
+          path: |
+            ${{ runner.temp }}/alistcore-symbols.txt
+            ${{ runner.temp }}/alistcore-arch.txt
+            ${{ runner.temp }}/xcodebuild-settings.txt
+            ${{ runner.temp }}/xcodebuild-archive.log
+          if-no-files-found: ignore
 
       - name: Package unsigned IPA
         run: |
